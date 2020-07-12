@@ -1,0 +1,58 @@
+# -Plant-UML
+@startuml
+
+title Last Picture
+hide footbox
+participant "User Agent" as A
+participant "Client" as B
+participant "Resource Server" as C
+participant "Authorisation Server" as D
+participant "ldentity Provider" as E
+
+activate A  #yellow
+activate B  #yellow
+A -[#blue]> B : GET ClientURL
+B -[#blue]>A : Main View
+A -[#red]> B : "GET /Client/GetResource"
+deactivate A
+activate C  #yellow
+B -[#red]> C : "GET api/Resource"
+C -[#red]> B : Unauthorised
+deactivate C
+activate A  #yellow
+B -[#red]> A : "Redirect + SAML Request"
+deactivate B
+activate E  #yellow
+A -[#red]> E : "GET/AuthnRequest + SAML Request"
+E -[#red]> A : "Login Viewy"
+A -[#blue]> E : "POST Credentials"
+E -[#blue]> A : "ClientRedirect View (embedded SAML Response)"
+deactivate E
+activate B  #yellow
+A -[#red]> B : "POST MuthnResporse+SAML Response"
+B -[#red]>o A : "AuthRedirect View (embedded SAML Response)"
+deactivate B
+activate D  #yellow
+A -[#blue]> D : "POST/ISAMLAuthorize + SAML Response"
+D -[#blue]> A : "Redirect to Authorze"
+A -[#blue]> D : "GET/Authorize"
+D -[#blue]> A : "Authorize View"
+A -[#red]> D : "POST/Authorize"
+D -[#red]> A : "Redirectto OAuthRedirect + Authorization code"
+activate B  #yellow
+A -[#red]> B : "GET/CientOAutRedrect + Atorization code"
+B -[#red]> D : "GET/OAuthVToked + Authorzation Code"
+D -[#red]> B : "OAut Access Token"
+B -[#red]> A : "Redirect to Main"
+A -[#red]> B : "GET /Client/Main"
+B -[#red]> A : "Main Vew"
+deactivate B
+deactivate D
+activate C #yellow
+A -[#blue]> C : "GET /GetResource + OAuth Access Token"
+C -[#blue]> A : Resource
+deactivate D
+deactivate A
+
+@enduml
+
